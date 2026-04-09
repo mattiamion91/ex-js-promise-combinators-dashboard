@@ -72,25 +72,32 @@ async function fetchJson(url) {
 }
 
 const getDashboardData = async (query) => {
-    const promiseDestinations = fetchJson(`${API_URL}/destinations?search=${query}`);
-    const promiseWeather = fetchJson(`${API_URL}/weathers?search=${query}`);
-    const promiseAirport = fetchJson(`${API_URL}/airports?search=${query}`);
 
-    const promises = [promiseDestinations, promiseWeather, promiseAirport];
-    const [destinations, weather, airport] = await Promise.all(promises);
+    try {
+        const promiseDestinations = fetchJson(`${API_URL}/destinations?search=${query}`);
+        const promiseWeather = fetchJson(`${API_URL}/weathers?search=${query}`);
+        const promiseAirport = fetchJson(`${API_URL}/airports?search=${query}`);
 
-    return {
-        city: destinations[0].name,
-        country: destinations[0].country,
-        temperature: weather[0].temperature,
-        weather: weather[0].weather_description,
-        airport: airport[0].name
+        const promises = [promiseDestinations, promiseWeather, promiseAirport];
+        const [destinations, weather, airport] = await Promise.all(promises);
+
+        return {
+            city: destinations[0].name,
+            country: destinations[0].country,
+            temperature: weather[0].temperature,
+            weather: weather[0].weather_description,
+            airport: airport[0].name
+        }
+
+    } catch (error) {
+        throw new Error('errore recupero dati');
     }
+
 }
 
 //uso la funzione appena creata
 (async () => {
-    const data = await getDashboardData('london')
+    const data = await getDashboardData('paris')
     console.log(`dashboard: `, data);
     console.log(`
         ${data.city} si trova in ${data.country}
